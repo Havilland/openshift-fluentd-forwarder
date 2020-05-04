@@ -1,5 +1,5 @@
 # start based on a centos image
-FROM registry.redhat.io/ubi7/ubi-7-rhscl
+FROM registry.redhat.io/ubi7/ubi
 
 ENV HOME=/opt/app-root/src \
   PATH=/opt/rh/rh-ruby22/root/usr/bin:/opt/app-root/src/bin:/opt/app-root/bin${PATH:+:${PATH}} \
