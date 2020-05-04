@@ -1,5 +1,9 @@
 # start based on a centos image
+<<<<<<< Updated upstream
 FROM registry.redhat.io/ubi7/ubi
+=======
+FROM ubi-7-rhscl
+>>>>>>> Stashed changes
 
 ENV HOME=/opt/app-root/src \
   PATH=/opt/rh/rh-ruby22/root/usr/bin:/opt/app-root/src/bin:/opt/app-root/bin${PATH:+:${PATH}} \
