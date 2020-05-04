@@ -1,5 +1,5 @@
 # start based on a centos image
-FROM rhel7
+FROM registry.redhat.io/ubi7/ubi-7-rhscl
 
 ENV HOME=/opt/app-root/src \
   PATH=/opt/rh/rh-ruby22/root/usr/bin:/opt/app-root/src/bin:/opt/app-root/bin${PATH:+:${PATH}} \
@@ -24,7 +24,7 @@ ENV HOME=/opt/app-root/src \
 
 LABEL io.k8s.description="Fluentd container for collecting logs from other fluentd instances" \
   io.k8s.display-name="Fluentd Forwarder (${FLUENTD_VERSION})" \
-  io.openshift.expose-services="24284:tcp" \
+  io.openshift.expose-services="24224:tcp" \
   io.openshift.tags="logging,fluentd,forwarder" \
   name="fluentd-forwarder" \
   architecture=x86_64
@@ -45,6 +45,6 @@ RUN /tmp/common-install.sh && \
 WORKDIR ${HOME}
 
 # external port
-EXPOSE 24284
+EXPOSE 24224
 
 CMD ["sh", "run.sh"]
