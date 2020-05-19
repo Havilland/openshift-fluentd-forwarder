@@ -1,0 +1,21 @@
+kind: ImageStream
+apiVersion: image.openshift.io/v1
+metadata:
+  name: redhat-ubi7
+  namespace: openshift
+spec:
+  lookupPolicy:
+    local: false
+  tags:
+    - name: latest
+      annotations:
+        openshift.io/display-name: RedHat UBI7 Image
+        tags: 'ubi7'
+        version: latest
+      from:
+        kind: DockerImage
+        name: 'registry.redhat.io/ubi7/ubi:latest'
+      generation: 2
+      importPolicy: {}
+      referencePolicy:
+        type: Local

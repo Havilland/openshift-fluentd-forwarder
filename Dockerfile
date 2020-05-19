@@ -2,12 +2,12 @@
 FROM image-registry.openshift-image-registry.svc:5000/openshift/redhat-ubi7
 
 ENV HOME=/opt/app-root/src \
-  PATH=/opt/rh/rh-ruby22/root/usr/bin:/opt/app-root/src/bin:/opt/app-root/bin${PATH:+:${PATH}} \
-  LD_LIBRARY_PATH=/opt/rh/rh-ruby22/root/usr/lib64${LD_LIBRARY_PATH:+:${LD_LIBRARY_PATH}} \
-  MANPATH=/opt/rh/rh-ruby22/root/usr/share/man:$MANPATH \
-  PKG_CONFIG_PATH=/opt/rh/rh-ruby22/root/usr/lib64/pkgconfig${PKG_CONFIG_PATH:+:${PKG_CONFIG_PATH}} \
-  XDG_DATA_DIRS=/opt/rh/rh-ruby22/root/usr/share${XDG_DATA_DIRS:+:${XDG_DATA_DIRS}} \
-  RUBY_VERSION=2.2 \
+  PATH=/opt/rh/rh-ruby26/root/usr/bin:/opt/app-root/src/bin:/opt/app-root/bin${PATH:+:${PATH}} \
+  LD_LIBRARY_PATH=/opt/rh/rh-ruby26/root/usr/lib64${LD_LIBRARY_PATH:+:${LD_LIBRARY_PATH}} \
+  MANPATH=/opt/rh/rh-ruby26/root/usr/share/man:$MANPATH \
+  PKG_CONFIG_PATH=/opt/rh/rh-ruby26/root/usr/lib64/pkgconfig${PKG_CONFIG_PATH:+:${PKG_CONFIG_PATH}} \
+  XDG_DATA_DIRS=/opt/rh/rh-ruby26/root/usr/share${XDG_DATA_DIRS:+:${XDG_DATA_DIRS}} \
+  RUBY_VERSION=2.6 \
   FLUENTD_VERSION=0.12.32 \
   GEM_HOME=/opt/app-root/src \
   DATA_VERSION=1.6.0 \
