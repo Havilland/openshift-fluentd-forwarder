@@ -139,7 +139,11 @@ parameters:
   - name: P_ADDITIONAL_OPTS
     description: Additional options passed to the forwarder plugin. The normal value for splunk is output_format json.
     value: ""
-  - name: P_SHARED_KEY
-    description: "A key shared between the logging providers and this forwarder to ensure secure operation. Default: 'ocpaggregatedloggingsharedkey'."
-    value: ocpaggregatedloggingsharedkey
+  - name: P_IMAGE_NAME
+    description: Target namespace for image. Used to reference the ImageStream source for the image.
+    value: openshift-fluentd-forwarder
+    required: true
+  - name: P_IMAGE_VERSION
+    description: Target namespace for image. Used to reference the ImageStream source for the image.
+    value: latest
     required: true

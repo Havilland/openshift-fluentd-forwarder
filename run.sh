@@ -66,7 +66,7 @@ export BUFFER_QUEUE_LIMIT BUFFER_SIZE_LIMIT
 
 # launch fluentd - from OpenShift/Origin logging-fluentd
 if [[ $DEBUG ]] ; then
-    exec fluentd $fluentdargs > /var/log/fluentd.log 2>&1
+    exec /opt/rh/rh-ruby26/root/usr/local/bin/fluentd $fluentdargs > /var/log/fluentd.log 2>&1
 else
-    exec fluentd $fluentdargs
+    exec /opt/rh/rh-ruby26/root/usr/local/bin/fluentd $fluentdargs
 fi
