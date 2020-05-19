@@ -1,19 +1,8 @@
 <source>
-  @type secure_forward
+  @type forward
   self_hostname "#{ENV['HOSTNAME']}"
   bind 0.0.0.0
-  port 24284
-
-  shared_key ${SHARED_KEY}
-
-  secure           ${IS_SECURE}
-  enable_strict_verification ${STRICT_VERIFICATION}
-
-  ca_cert_path     ${CA_PATH}
-  cert_path        ${CERT_PATH}
-  private_key_path ${KEY_PATH}
-
-  private_key_passphrase ${KEY_PASSPHRASE}
+  port 24224
 </source>
 
 <filter **>
