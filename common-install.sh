@@ -57,7 +57,7 @@ gem install -N --conservative --minimal-deps --no-document \
   'fluent-plugin-rewrite-tag-filter:<2.0.0' \
   fluent-plugin-kubernetes_metadata_filter \
   fluent-plugin-rewrite-tag-filter \
-  fluent-plugin-secure-forward \
+  fluent-plugin-forward \
   'fluent-plugin-remote_syslog:<1.0.0' \
   fluent-plugin-splunk-ex \
   fluent-plugin-splunkhec
