@@ -11,17 +11,21 @@ objects:
 - apiVersion: v1
   kind: ImageStream
   metadata:
-    name: ubi-7-rhscl
+    name: redhat-ubi7
+    namespace: openshift
     labels:
       app: fluentd-forwarder
   spec:
     tags:
       - name: latest
         annotations:
-          openshift.io/imported-from: registry.redhat.io/ubi7/ubi-7-rhscl
+          openshift.io/imported-from: registry.redhat.io/ubi7/ubi
+          openshift.io/display-name: RedHat UBI7 Image
+          tags: 'ubi7'
+          version: latest
         from:
           kind: DockerImage
-          name: registry.redhat.io/ubi7/ubi-7-rhscl
+          name: registry.redhat.io/ubi7/ubi:latest
         referencePolicy:
           type: Source
 - apiVersion: v1
@@ -46,9 +50,11 @@ objects:
     strategy:
       type: Docker
       dockerStrategy:
+        dockerfilePath: Dockerfile
         from:
           kind: ImageStreamTag
-          name: 'ubi-7-rhscl:latest'
+          name: 'redhat-ubi7:latest'
+          namespace: 'openshift'
     output:
       to:
         kind: ImageStreamTag

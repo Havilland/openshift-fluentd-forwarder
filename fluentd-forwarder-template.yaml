@@ -141,7 +141,7 @@ parameters:
     value: ""
   - name: P_IMAGE_NAME
     description: Target namespace for image. Used to reference the ImageStream source for the image.
-    value: openshift-fluentd-forwarder
+    value: fluentd-forwarder
     required: true
   - name: P_IMAGE_VERSION
     description: Target namespace for image. Used to reference the ImageStream source for the image.
