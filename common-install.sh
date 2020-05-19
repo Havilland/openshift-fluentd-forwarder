@@ -20,9 +20,9 @@ RED_HAT_MATCH='^Red Hat.*$'
 if [[ $RELEASE =~ $RED_HAT_MATCH && -z "$USE_SYSTEM_REPOS" ]]; then
   #NOTE: Until the first yum command is run, /etc/yum.repos.d/redhat.repo contains no repositories, so yum-config-manager will not enable/disable anything.
   #This command will force the population of said file, see #https://access.redhat.com/solutions/1443553
-  yum repolist --disablerepo=* && yum-config-manager --disable \* > /dev/null
+#  yum repolist --disablerepo=* && yum-config-manager --disable \* > /dev/null
   #Set YUM_ARGS
-  YUM_ARGS="${YUM_ARGS} --enablerepo=rhel-7-server-rpms --enablerepo=rhel-server-rhscl-7-rpms --enablerepo=rhel-7-server-optional-rpms"
+  #YUM_ARGS="${YUM_ARGS} --enablerepo=rhel-7-server-rpms --enablerepo=rhel-server-rhscl-7-rpms --enablerepo=rhel-7-server-optional-rpms"
 fi
 
 # enable epel when on CentOS
