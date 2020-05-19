@@ -16,14 +16,14 @@ PACKAGES="gem gcc-c++ libcurl-devel make bc gettext nss_wrapper hostname iproute
 PACKAGES="${PACKAGES} rh-ruby26 rh-ruby26-rubygems rh-ruby26-ruby-devel"
 
 # if the release is a red hat version then we need to set additional arguments for yum repositories
-RED_HAT_MATCH='^Red Hat.*$'
-if [[ $RELEASE =~ $RED_HAT_MATCH && -z "$USE_SYSTEM_REPOS" ]]; then
+#RED_HAT_MATCH='^Red Hat.*$'
+#if [[ $RELEASE =~ $RED_HAT_MATCH && -z "$USE_SYSTEM_REPOS" ]]; then
   #NOTE: Until the first yum command is run, /etc/yum.repos.d/redhat.repo contains no repositories, so yum-config-manager will not enable/disable anything.
   #This command will force the population of said file, see #https://access.redhat.com/solutions/1443553
 #  yum repolist --disablerepo=* && yum-config-manager --disable \* > /dev/null
   #Set YUM_ARGS
   #YUM_ARGS="${YUM_ARGS} --enablerepo=rhel-7-server-rpms --enablerepo=rhel-server-rhscl-7-rpms --enablerepo=rhel-7-server-optional-rpms"
-fi
+#fi
 
 # enable epel when on CentOS
 CENTOS_MATCH='^CentOS.*'
