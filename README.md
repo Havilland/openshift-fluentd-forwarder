@@ -2,39 +2,43 @@
 
 ## Table of Contents
 
-* [Overview](#overview)
-* [Public Domain](#public-domain)
-* [License](#license)
-* [Bill of Materials](#bill-of-materials)
-    * [Environment Specifications](#environment-specifications)
-    * [Template Files](#template-files)
-    * [Config Files](#config-files)
-* [Setup Instructions](#setup-instructions)
-* [Presenter Notes](#presenter-notes)
-    * [Environment Setup](#environment-setup)
-    * [Create Build Configuration](#create-build-configuration)
-    * [Create Fluentd Forwarder](#create-fluentd-forwarder)
-      * [RHEL](#rhel)
-        * [RHEL Rsyslog](#rhel-rsyslog)
-        * [RHEL splunkex](#rhel-splunkex)
-        * [RHEL splunkhec](#rhel-splunkhec)
-      * [CentOS](#centos)
-        * [CentOS Rsyslog](#centos-rsyslog)
-        * [CentOS splunkex](#centos-splunkex)
-        * [CentOS splunkhec](#centos-splunkhec)
-    * [Configure Fluentd Loggers](#configure-fluentd-loggers)
-    * [Additional Configuration](#additional-configuration)
-      * [Filtering](#filtering)
-    * [Validating the Application](#validating-the-application)
-* [Resources](#resources)
-* [Privacy](#privacy)
-* [Contributing](#contributing)
-* [Records](#records)
+- [Fluentd Forwarder Container](#fluentd-forwarder-container)
+  - [Table of Contents](#table-of-contents)
+  - [Overview](#overview)
+  - [Public Domain](#public-domain)
+  - [License](#license)
+  - [Privacy](#privacy)
+  - [Bill of Materials](#bill-of-materials)
+    - [Environment Specifications](#environment-specifications)
+    - [Template Files](#template-files)
+    - [Config Files](#config-files)
+  - [Setup Instructions](#setup-instructions)
+    - [Environment Setup](#environment-setup)
+    - [Create Build Configuration](#create-build-configuration)
+    - [Create Fluentd Forwarder](#create-fluentd-forwarder)
+      - [RHEL](#rhel)
+        - [RHEL Rsyslog](#rhel-rsyslog)
+        - [RHEL splunkex](#rhel-splunkex)
+        - [RHEL splunkhec](#rhel-splunkhec)
+      - [CentOS](#centos)
+        - [CentOS Rsyslog](#centos-rsyslog)
+        - [CentOS splunkex](#centos-splunkex)
+        - [CentOS splunkhec](#centos-splunkhec)
+    - [Configure Fluentd Loggers](#configure-fluentd-loggers)
+    - [Additional Configuration](#additional-configuration)
+      - [Filtering](#filtering)
+    - [Validating the Application](#validating-the-application)
+  - [Resources](#resources)
+  - [Privacy](#privacy-1)
+  - [Contributing](#contributing)
+  - [Records](#records)
 
 ## Overview
+
 OpenShift can be configured to host an EFK stack that stores and indexes log data but at some sites a log aggregation system is already in place. A forwarding fluentd can be configured to forward log data to a remote collection point. Using a containerized version that runs within OCP both simplifies some of the infrastructure and certificate management and allows rapid deployment with resiliancy.
 
 ## Public Domain
+
 This project constitutes a work of the United States Government and is not
 subject to domestic copyright protection under 17 USC § 105. This project is in
 the public domain within the United States, and copyright and related rights in
@@ -44,6 +48,7 @@ submitting a pull request you are agreeing to comply with this waiver of
 copyright interest.
 
 ## License
+
 The project utilizes code licensed under the terms of the Apache Software
 License and therefore is licensed under ASL v2 or later.
 
@@ -59,6 +64,7 @@ You should have received a copy of the Apache Software License along with this
 program. If not, see http://www.apache.org/licenses/LICENSE-2.0.html
 
 ## Privacy
+
 This project contains only non-sensitive, publicly available data and
 information. All material and community participation is covered by the
 Surveillance Platform [Disclaimer](https://github.com/CDCgov/template/blob/master/DISCLAIMER.md)
@@ -73,15 +79,15 @@ This quickstart should be run on an installation of OpenShift Enterprise V3 with
 
 ### Template Files
 
-* Build Configurations
-  * [RHEL](./fluentd-forwarder-build-config-template.yaml)
-  * [CentOS](./fluentd-forwarder-centos-config-template.yaml)
-* [Application Deployment Template](./fluentd-forwarder-template.yaml)
+- Build Configurations
+  - [RHEL](./fluentd-forwarder-build-config-template.yaml)
+  - [CentOS](./fluentd-forwarder-centos-config-template.yaml)
+- [Application Deployment Template](./fluentd-forwarder-template.yaml)
 
 ### Config Files
 
-* [Fluentd Forwarding Configuration](./fluentd.conf.template)
-  * Echoed in [ConfigMap section in Application Template](./fluentd-forwarder-template.yaml)
+- [Fluentd Forwarding Configuration](./fluentd.conf.template)
+  - Echoed in [ConfigMap section in Application Template](./fluentd-forwarder-template.yaml)
 
 ## Setup Instructions
 
@@ -94,48 +100,56 @@ The EFK stack should already be configured in the "logging" namespace.
 ### Create Build Configuration
 
 Choose the RHEL (default) or CentOS (-centos) flavor of build configuration. Add the build configuration template to the logging namespace.
+
 ```bash
 oc project logging
 oc apply -f fluentd-forwarder-build-config-template.yaml
 ```
 
 For CentOS use the -centos template.
+
 ```bash
 oc project logging
 oc apply -f fluentd-forwarder-centos-build-config-template.yaml
 ```
 
 Process the template to create a build, using any relevant variables. In the general case the defaults are fine.
+
 ```bash
 oc project logging
 oc process fluentd-forwarder | oc apply -f -
 ```
 
 For CentOS process the -centos template.
+
 ```bash
 oc project logging
 oc process fluentd-forwarder-centos | oc apply -f -
 ```
 
 By default the build will disable all repositories in the base image, enabling only the ones required for installing the required packages. If you want to use the build process to use the existing repository config as is (e.g. if you're using a custom base image) then set the `USE_SYSTEM_REPOS` environment variable to any value in the BuildConfig object.
-```
+
+```bash
 oc project logging
 oc set env bc/fluentd-forwarder USE_SYSTEM_REPOS=1
 ```
 
 On CentOS:
-```
+
+```bash
 oc project logging
 oc set env bc/fluentd-forwarder-centos USE_SYSTEM_REPOS=1
 ```
 
 Build the fluentd-forwarder
+
 ```bash
 oc project logging
 oc start-build fluentd-forwarder-build
 ```
 
 To build with CentOS use the -centos build configuration.
+
 ```bash
 oc project logging
 oc start-build fluentd-forwarder-centos-build
@@ -144,6 +158,7 @@ oc start-build fluentd-forwarder-centos-build
 ### Create Fluentd Forwarder
 
 Add the template to the logging namespace:
+
 ```bash
 oc project logging
 oc apply -f fluentd-forwarder-template.yaml
@@ -154,6 +169,7 @@ oc apply -f fluentd-forwarder-template.yaml
 ##### RHEL Rsyslog
 
 Create the new rsyslog logging forwarder application deployment:
+
 ```bash
 oc project logging
 oc new-app fluentd-forwarder \
@@ -166,6 +182,7 @@ oc new-app fluentd-forwarder \
 ##### RHEL splunkex
 
 To create the new splunk-ex logging forwarder application deployment:
+
 ```bash
 oc project logging && \
 oc process -f fluentd-forwarder-template.yaml \
@@ -179,6 +196,7 @@ oc process -f fluentd-forwarder-template.yaml \
 ##### RHEL splunkhec
 
 To create the new splunkhec logging forwarder application deployment:
+
 ```bash
 oc project logging
 oc new-app fluentd-forwarder \
@@ -194,6 +212,7 @@ oc new-app fluentd-forwarder \
 ##### CentOS Rsyslog
 
 To do the same for CentOS you need to reference the ImageStream created by that build.
+
 ```bash
 oc project logging
 oc new-app fluentd-forwarder \
@@ -207,6 +226,7 @@ oc new-app fluentd-forwarder \
 ##### CentOS splunkex
 
 To create the new splunk-ex logging forwarder application deployment:
+
 ```bash
 oc project logging && \
 oc process -f fluentd-forwarder-template.yaml \
@@ -221,6 +241,7 @@ oc process -f fluentd-forwarder-template.yaml \
 ##### CentOS splunkhec
 
 To create the new splunkhec logging forwarder application deployment:
+
 ```bash
 oc project logging
 oc new-app fluentd-forwarder \
@@ -232,12 +253,12 @@ oc new-app fluentd-forwarder \
    -p P_ADDITIONAL_OPTS="token <token_value>"
 ```
 
-
 A full list of parameters can be found in the [template](./fluentd-forwarder-template.yaml). Additional non-parameterized parameters and environment variables can be found in the [Dockerfile](./Dockerfile).
 
 ### Configure Fluentd Loggers
 
 The "logging-fluentd" configmap's "data.secure-forward.conf" key needs to be edited as well.
+
 ```bash
 oc edit configmap -n logging logging-fluentd
 ```
@@ -268,12 +289,15 @@ data:
 This will cause each individual fluentd logger to begin forwarding to the service address `fluentd-forwarder.logging.svc.cluster.local` which was created with the new-app command. That service has it's own cluster-generated certificates and the "ca_cert_path" value here is used to trust the cluster's service signer CA.
 
 After saving the above changes the logging-fluentd pods need to be restarted. Delete them and they will be recreated.
+
 ```bash
 oc delete pod -l component=fluentd
 ```
 
 ### Additional Configuration
+
 After creating the application you can edit the configuration for the logging forwarder in a more direct manner by manipulating the configuration map.
+
 ```bash
 oc edit configmap -n logging fluentd-forwarder
 ```
@@ -326,6 +350,7 @@ oc delete pods -l name=fluentd-forwarder
 ```
 
 #### Filtering
+
 In some use cases it might be necessary to perform filtering at the external fluentd process.  This would be done to reduce the number or type of messages that are forwared.
 
 Using the fluentd.conf file from above a new record will be added to the json message.  The record `kubernetes_namespace_name` will be set to the OpenShift namespace from where the messages originated.
@@ -420,8 +445,8 @@ data:
     </match>
 ```
 
-
 ### Validating the Application
+
 The best verification is that logs are showing up in the remote location. The application sets two tags "forwarded_by" which is set to the pod's hostname and "source_component" which is always set to "OCP". You can use those tags to search the logging collection facility for the logs being produced.
 
 If VERBOSE is set as an environment variable in the deployment config (`oc edit dc fluentd-forwarder`) then you can tail the logs of the fluentd-forwarder container and you should see a lot of information about reads. This is not the most reliable test but it will at least point in the right direction.
@@ -440,11 +465,13 @@ oc logs fluentd-forwarder-1-a3zdf
 ```
 
 ## Resources
-* [Secure Forwarding with Splunk](http://v1.uncontained.io/playbooks/operationalizing/secure-forward-splunk.html)
-* [Origin Fluentd Image Source](https://github.com/openshift/origin-aggregated-logging/blob/master/fluentd/Dockerfile)
-* [Fluentd Filter Plugin Overview](http://docs.fluentd.org/v0.12/articles/filter-plugin-overview)
+
+- [Secure Forwarding with Splunk](http://v1.uncontained.io/playbooks/operationalizing/secure-forward-splunk.html)
+- [Origin Fluentd Image Source](https://github.com/openshift/origin-aggregated-logging/blob/master/fluentd/Dockerfile)
+- [Fluentd Filter Plugin Overview](http://docs.fluentd.org/v0.12/articles/filter-plugin-overview)
 
 ## Privacy
+
 This project contains only non-sensitive, publicly available data and
 information. All material and community participation is covered by the
 Surveillance Platform [Disclaimer](https://github.com/CDCgov/template/blob/master/DISCLAIMER.md)
@@ -452,6 +479,7 @@ and [Code of Conduct](https://github.com/CDCgov/template/blob/master/code-of-con
 For more information about CDC's privacy policy, please visit [http://www.cdc.gov/privacy.html](http://www.cdc.gov/privacy.html).
 
 ## Contributing
+
 Anyone is encouraged to contribute to the project by [forking](https://help.github.com/articles/fork-a-repo)
 and submitting a pull request. (If you are new to GitHub, you might start with a
 [basic tutorial](https://help.github.com/articles/set-up-git).) By contributing
@@ -465,6 +493,7 @@ CDC including this GitHub page are subject to the [Presidential Records Act](htt
 and may be archived. Learn more at [http://www.cdc.gov/other/privacy.html](http://www.cdc.gov/other/privacy.html).
 
 ## Records
+
 This project is not a source of government records, but is a copy to increase
 collaboration and collaborative potential. All government records will be
 published through the [CDC web site](http://www.cdc.gov).
