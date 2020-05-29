@@ -15,7 +15,7 @@ spec:
       from:
         kind: DockerImage
         name: 'registry.redhat.io/ubi7/ubi:latest'
-      generation: 2
+      generation: 1
       importPolicy: {}
       referencePolicy:
         type: Local

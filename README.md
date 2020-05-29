@@ -16,14 +16,9 @@
     - [Environment Setup](#environment-setup)
     - [Create Build Configuration](#create-build-configuration)
     - [Create Fluentd Forwarder](#create-fluentd-forwarder)
-      - [RHEL](#rhel)
-        - [RHEL Rsyslog](#rhel-rsyslog)
-        - [RHEL splunkex](#rhel-splunkex)
-        - [RHEL splunkhec](#rhel-splunkhec)
-      - [CentOS](#centos)
-        - [CentOS Rsyslog](#centos-rsyslog)
-        - [CentOS splunkex](#centos-splunkex)
-        - [CentOS splunkhec](#centos-splunkhec)
+      - [UBI](#ubi)
+        - [UBI splunkex](#ubi-splunkex)
+        - [UBI splunkhec](#ubi-splunkhec)
     - [Configure Fluentd Loggers](#configure-fluentd-loggers)
     - [Additional Configuration](#additional-configuration)
       - [Filtering](#filtering)
@@ -75,12 +70,12 @@ For more information about CDC's privacy policy, please visit [http://www.cdc.go
 
 ### Environment Specifications
 
-This quickstart should be run on an installation of OpenShift Enterprise V3 with an existing EFK deployment.
+This quickstart should be run on an installation of OpenShift Enterprise V4.4+ with an existing openshift-logging deployment.
 
 ### Template Files
 
 - Build Configurations
-  - [RHEL](./fluentd-forwarder-build-config-template.yaml)
+  - [UBI](./fluentd-forwarder-build-config-template.yaml)
   - [CentOS](./fluentd-forwarder-centos-config-template.yaml)
 - [Application Deployment Template](./fluentd-forwarder-template.yaml)
 
@@ -95,22 +90,15 @@ Have the `[fluentd-forwarder-build-config-template](./fluentd-forwarder-build-co
 
 ### Environment Setup
 
-The EFK stack should already be configured in the "logging" namespace.
+The EFK stack should already be configured in the "openshift-logging" namespace.
 
 ### Create Build Configuration
 
-Choose the RHEL (default) or CentOS (-centos) flavor of build configuration. Add the build configuration template to the logging namespace.
+The forwarder uses UBI7 as a base image
 
 ```bash
 oc project logging
 oc apply -f fluentd-forwarder-build-config-template.yaml
-```
-
-For CentOS use the -centos template.
-
-```bash
-oc project logging
-oc apply -f fluentd-forwarder-centos-build-config-template.yaml
 ```
 
 Process the template to create a build, using any relevant variables. In the general case the defaults are fine.
@@ -120,39 +108,11 @@ oc project logging
 oc process fluentd-forwarder | oc apply -f -
 ```
 
-For CentOS process the -centos template.
-
-```bash
-oc project logging
-oc process fluentd-forwarder-centos | oc apply -f -
-```
-
-By default the build will disable all repositories in the base image, enabling only the ones required for installing the required packages. If you want to use the build process to use the existing repository config as is (e.g. if you're using a custom base image) then set the `USE_SYSTEM_REPOS` environment variable to any value in the BuildConfig object.
-
-```bash
-oc project logging
-oc set env bc/fluentd-forwarder USE_SYSTEM_REPOS=1
-```
-
-On CentOS:
-
-```bash
-oc project logging
-oc set env bc/fluentd-forwarder-centos USE_SYSTEM_REPOS=1
-```
-
 Build the fluentd-forwarder
 
 ```bash
 oc project logging
 oc start-build fluentd-forwarder-build
-```
-
-To build with CentOS use the -centos build configuration.
-
-```bash
-oc project logging
-oc start-build fluentd-forwarder-centos-build
 ```
 
 ### Create Fluentd Forwarder
@@ -164,22 +124,9 @@ oc project logging
 oc apply -f fluentd-forwarder-template.yaml
 ```
 
-#### RHEL
+#### UBI
 
-##### RHEL Rsyslog
-
-Create the new rsyslog logging forwarder application deployment:
-
-```bash
-oc project logging
-oc new-app fluentd-forwarder \
-   -p "P_TARGET_TYPE=remote_syslog" \
-   -p "P_TARGET_HOST=rsyslog.internal.company.com" \
-   -p "P_TARGET_PORT=514" \
-   -p "P_SHARED_KEY=changeme"
-```
-
-##### RHEL splunkex
+##### UBI splunkex
 
 To create the new splunk-ex logging forwarder application deployment:
 
@@ -193,59 +140,13 @@ oc process -f fluentd-forwarder-template.yaml \
    -p "P_ADDITIONAL_OPTS=output_format json"
 ```
 
-##### RHEL splunkhec
+##### UBI splunkhec
 
 To create the new splunkhec logging forwarder application deployment:
 
 ```bash
 oc project logging
 oc new-app fluentd-forwarder \
-   -p P_TARGET_TYPE="splunkhec" \
-   -p P_TARGET_HOST="examplehec.example.com" \
-   -p P_TARGET_PORT="8088" \
-   -p P_SHARED_KEY="changeme" \
-   -p P_ADDITIONAL_OPTS="token <token_value>"
-```
-
-#### CentOS
-
-##### CentOS Rsyslog
-
-To do the same for CentOS you need to reference the ImageStream created by that build.
-
-```bash
-oc project logging
-oc new-app fluentd-forwarder \
-   -p "P_IMAGE_NAME=fluentd-forwarder-centos" \
-   -p "P_TARGET_TYPE=remote_syslog" \
-   -p "P_TARGET_HOST=rsyslog.internal.company.com" \
-   -p "P_TARGET_PORT=514" \
-   -p "P_SHARED_KEY=changeme"
-```
-
-##### CentOS splunkex
-
-To create the new splunk-ex logging forwarder application deployment:
-
-```bash
-oc project logging && \
-oc process -f fluentd-forwarder-template.yaml \
-   -p "P_IMAGE_NAME=fluentd-forwarder-centos" \
-   -p "P_TARGET_TYPE=splunk_ex" \
-   -p "P_TARGET_HOST=10.10.10.10" \
-   -p "P_TARGET_PORT=9997" \
-   -p "P_SHARED_KEY=changeme" \
-   -p "P_ADDITIONAL_OPTS=output_format json"
-```
-
-##### CentOS splunkhec
-
-To create the new splunkhec logging forwarder application deployment:
-
-```bash
-oc project logging
-oc new-app fluentd-forwarder \
-   -p "P_IMAGE_NAME=fluentd-forwarder-centos" \
    -p P_TARGET_TYPE="splunkhec" \
    -p P_TARGET_HOST="examplehec.example.com" \
    -p P_TARGET_PORT="8088" \

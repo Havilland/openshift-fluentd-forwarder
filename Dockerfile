@@ -1,4 +1,3 @@
-# start based on a centos image
 FROM image-registry.openshift-image-registry.svc:5000/openshift/redhat-ubi7
 
 ENV HOME=/opt/app-root/src \
