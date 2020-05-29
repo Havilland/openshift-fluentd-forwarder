@@ -47,6 +47,8 @@ objects:
             value: ${P_ADDITIONAL_OPTS}
           - name: SHARED_KEY
             value: ${P_SHARED_KEY}
+          - name: TARGET_USE_SSL
+            value: ${P_TARGET_USE_SSL}
           volumeMounts:
           - mountPath: /tmp/fluentd-config
             name: fluentd-forwarder-config
@@ -117,6 +119,8 @@ objects:
         @type ${TARGET_TYPE}
         host ${TARGET_HOST}
         port ${TARGET_PORT}
+        use_ssl ${TARGET_USE_SSL}
+        ssl_verify false
         ${ADDITIONAL_OPTS}
       </match>
 parameters:
@@ -125,20 +129,20 @@ parameters:
     value: test-logging
     required: true
   - name: P_TARGET_TYPE
-    description: The output target's type. Can be 'remote_syslog' or 'splunk_ex'.
+    description: The output target's type. Defaults to splunk_hec
     required: true
-    value: remote_syslog
+    value: splunk_hec
   - name: P_TARGET_HOST
     description: The remote host that is the target for the logging data.
-    value: remote-syslog-host.lan
+    value: splunk-hec.example.com
     required: true
   - name: P_TARGET_PORT
-    description: The remote port on the host that is the target for the logging data. The normal value for syslog is 514 and the normal value for splunk is 9997.
+    description: The remote port on the host that is the target for the logging data. The normal value for syslog is 514 and the normal value for splunk_hec is 8088.
     required: true
-    value: "514"
+    value: "8088"
   - name: P_ADDITIONAL_OPTS
     description: Additional options passed to the forwarder plugin. The normal value for splunk is output_format json.
-    value: ""
+    value: "token XXX-XXX-XXX"
   - name: P_IMAGE_NAME
     description: Target namespace for image. Used to reference the ImageStream source for the image.
     value: fluentd-forwarder
@@ -146,4 +150,8 @@ parameters:
   - name: P_IMAGE_VERSION
     description: Target namespace for image. Used to reference the ImageStream source for the image.
     value: latest
+    required: true
+  - name: P_TARGET_USE_SSL
+    description: Set to false if target splunk doesn't use https
+    value: true
     required: true

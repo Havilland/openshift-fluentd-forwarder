@@ -58,8 +58,6 @@ gem install -N --conservative --minimal-deps --no-document \
   fluent-plugin-kubernetes_metadata_filter \
   fluent-plugin-rewrite-tag-filter \
   'fluent-plugin-remote_syslog:<1.0.0' \
-  fluent-plugin-splunk-ex \
-  fluent-plugin-splunkhec \
   fluent-plugin-splunk-enterprise
 
 # set up directores so that group 0 can have access like specified in
